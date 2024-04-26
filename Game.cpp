@@ -1,19 +1,21 @@
-// game.cpp
 #include "Game.hpp"
 
-Game::Game() : board(), player1("Player one", 'X'), player2("Player two", 'O'), currentPlayer(&player1), gameOver(false) {}
+Game::Game() : player1('X'), player2('O'), currentPlayerMark('X'), gameOver(false) {}
 
 void Game::start() {
-    int move;
     while (!gameOver) {
         board.display();
-        move = currentPlayer->makeMove();
-        if (board.placeMarker(move, currentPlayer->getMarker())) {
-            if (board.checkWin(currentPlayer->getMarker())) {
+        int cell = (currentPlayerMark == 'X') ? player1.makeMove() : player2.makeMove();
+        if (board.placeMark(cell, currentPlayerMark)) {
+            char winner = board.checkWinner();
+            if (winner != ' ') {
                 board.display();
-                std::cout << currentPlayer->getName() << " wins!\n";
+                if (winner == 'X')
+                    std::cout << "Player one wins!\n";
+                else
+                    std::cout << "Player two wins!\n";
                 gameOver = true;
-            } else if (board.checkDraw()) {
+            } else if (board.isBoardFull()) {
                 board.display();
                 std::cout << "It's a draw!\n";
                 gameOver = true;
@@ -27,5 +29,5 @@ void Game::start() {
 }
 
 void Game::switchPlayer() {
-    currentPlayer = (currentPlayer == &player1) ? &player2 : &player1;
+    currentPlayerMark = (currentPlayerMark == 'X') ? 'O' : 'X';
 }
